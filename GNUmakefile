@@ -1,36 +1,31 @@
-CC = gcc
-CFLAGS = -fPIC -c -Wall -std=c89 -g
-LDFLAGS = -shared -g -std=c89
+ifndef IMAGE_FILTER_DIR
+IMAGE_FILTER_DIR := .
+endif
 
-LDFLAGS_EXEC = -L.
-LDLIBS = -limage -ldl
+CC := gcc
+CFLAGS := -fPIC -c -Wall -g -std=c89
+LDFLAGS := -shared -g -std=c89
 
-OBJ_DIR := tmp
-SRC_DIR := src_image
-HDR_DIR := include
-
-SERIAL_SRC := src/serial.c
-SERIAL_EXEC := serial
+OBJ_DIR := $(IMAGE_FILTER_DIR)/tmp
+SRC_DIR := $(IMAGE_FILTER_DIR)/src
+HDR_DIR := $(IMAGE_FILTER_DIR)/include
 
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
-HDR = ${wildcard include/*.h}
-LIBRARY = libimage.so
+HDR = ${wildcard $(HDR_DIR)/*.h}
+LIB = $(IMAGE_FILTER_DIR)/libimage.so
 
-build: prebuild $(SRC) $(OBJ) $(LIBRARY)
+build: prebuild $(LIB)
 
-prebuild:
-	mkdir -p $(OBJ_DIR)
-
-$(LIBRARY): $(OBJ)
+$(LIB): $(OBJ)
 	$(CC) $(LDFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HDR)
 	$(CC) $(CFLAGS) $< -o $@
 
-$(SERIAL_EXEC): $(SERIAL_SRC) build
-	$(CC) $(LDFLAGS_EXEC) $< -o $@ $(LDLIBS)
-
-.PHONY: clean
+.PHONY: clean prebuild
 clean:
-	rm -rf $(OBJ_DIR) $(LIBRARY) $(SERIAL_EXEC)
+	rm -rf $(OBJ_DIR) $(LIB)
+
+prebuild:
+	mkdir -p $(OBJ_DIR)
