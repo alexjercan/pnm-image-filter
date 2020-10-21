@@ -9,6 +9,7 @@ uint32_t apply_filter(struct _Image *image, float filter[3][3])
 
     memmove(tmp, image->pixels, size * sizeof(struct _Pixel));
 
+    /*TODO : parallel*/
     for (j = 0; j < image->height; j++)
         for (i = 0; i < image->width; i++)
             image_filter_pixel_at(image, i, j, filter,
