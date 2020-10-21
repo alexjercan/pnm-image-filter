@@ -1,6 +1,21 @@
 #ifndef IF_IMAGE_H
 #define IF_IMAGE_H
 
+#if defined(__linux__)
+#define FUNC_DECL_PREFIX
+#include <unistd.h>
+#include <fcntl.h>
+#elif defined(_WIN32)
+#include <Windows.h>
+#ifdef DLL_EXPORTS
+#define FUNC_DECL_PREFIX __declspec(dllexport)
+#else
+#define FUNC_DECL_PREFIX __declspec(dllimport)
+#endif
+#else
+#error "Unknown platform"
+#endif
+
 #include <string.h>
 
 #include "binary_file.h"
@@ -22,14 +37,14 @@ struct _Image
     struct _Buffer raw;
 };
 
-uint32_t image_read(const char *path, struct _Image *image);
-uint32_t image_write(const char *path, struct _Image *image);
+FUNC_DECL_PREFIX uint32_t image_read(const char *path, struct _Image *image);
+FUNC_DECL_PREFIX uint32_t image_write(const char *path, struct _Image *image);
 
-uint32_t image_filter_pixel_at(struct _Image *image, int32_t i, int32_t j,
-                               float filter[3][3], struct _Pixel *out);
+FUNC_DECL_PREFIX uint32_t image_filter_pixel_at(struct _Image *image, int32_t i, int32_t j,
+                                                float filter[3][3], struct _Pixel *out);
 
-struct _Pixel image_get_pixel(struct _Image *image, int32_t x, int32_t y);
+FUNC_DECL_PREFIX struct _Pixel image_get_pixel(struct _Image *image, int32_t x, int32_t y);
 
-void image_free(struct _Image *image);
+FUNC_DECL_PREFIX void image_free(struct _Image *image);
 
 #endif
