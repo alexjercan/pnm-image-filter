@@ -13,15 +13,11 @@ HDR_DIR := $(IMAGE_FILTER_DIR)/include
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 HDR := ${wildcard $(HDR_DIR)/*.h}
-LIB := $(IMAGE_FILTER_DIR)/libimage.so
-SLB := $(IMAGE_FILTER_DIR)/libimage.a
+LIB := $(IMAGE_FILTER_DIR)/libimage.a
 
-build: prebuild $(LIB) $(SLB)
+build: prebuild $(LIB)
 
 $(LIB): $(OBJ)
-	$(CC) $(LDFLAGS) $^ -o $@
-
-$(SLB): $(OBJ)
 	$(CC) $(LDFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HDR)
@@ -29,7 +25,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HDR)
 
 .PHONY: clean prebuild
 clean:
-	rm -rf $(OBJ_DIR) $(LIB) $(SLB)
+	rm -rf $(OBJ_DIR) $(LIB)
 
 prebuild:
 	mkdir -p $(OBJ_DIR)
