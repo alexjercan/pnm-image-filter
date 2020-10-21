@@ -6,6 +6,8 @@ static int32_t set_image_dimensions(struct _Image *image);
 static int32_t set_image_max_color(struct _Image *image);
 static int32_t set_image_pixels(struct _Image *image);
 
+static struct _Pixel get_pixel(struct _Image *image, int32_t x, int32_t y);
+
 char *read_line_from_buffer(struct _Buffer *buffer);
 
 uint32_t image_read(const char *path, struct _Image *image)
@@ -26,15 +28,28 @@ uint32_t image_write(const char *path, struct _Image *image)
     return binary__file_write(path, image->raw);
 }
 
-struct _Pixel image_get_pixel(struct _Image *image, int32_t x, int32_t y)
+uint32_t image_filter_pixel_at(struct _Image *image, int32_t i, int32_t j,
+                               float filter[3][3], struct _Pixel *out)
 {
-    if (x < 0 || x >= image->width || y < 0 || y >= image->height)
+    float r = 0, g = 0, b = 0;
+    int32_t x, y;
+
+    for (x = i - 1; x <= i + 1; ++x)
     {
-        struct _Pixel zero;
-        zero.r = zero.g = zero.b = 0;
-        return zero;
+        for (y = j - 1; y <= j + 1; ++y)
+        {
+            struct _Pixel pixel = get_pixel(image, x, y);
+            r += pixel.r * filter[x - (i - 1)][y - (j - 1)];
+            g += pixel.g * filter[x - (i - 1)][y - (j - 1)];
+            b += pixel.b * filter[x - (i - 1)][y - (j - 1)];
+        }
     }
-    return image->pixels[x + y * image->width];
+
+    r = MIN(image->max, MAX(0, r));
+    g = MIN(image->max, MAX(0, g));
+    b = MIN(image->max, MAX(0, b));
+
+    return pixel_init(out, r, g, b);
 }
 
 void image_free(struct _Image *image)
@@ -93,6 +108,13 @@ int32_t set_image_pixels(struct _Image *image)
 {
     image->pixels = (void *)image->raw.str + image->raw.idx;
     return 0;
+}
+
+static struct _Pixel get_pixel(struct _Image *image, int32_t x, int32_t y)
+{
+    if (x < 0 || x >= image->width || y < 0 || y >= image->height)
+        return pixel_zero();
+    return image->pixels[x + y * image->width];
 }
 
 char *read_line_from_buffer(struct _Buffer *buffer)

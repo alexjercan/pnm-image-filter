@@ -9,11 +9,9 @@ int32_t pixel_init(struct _Pixel *pixel, uint8_t r, uint8_t g, uint8_t b)
     return 0;
 }
 
-int32_t pixel_clamp(struct _Pixel *pixel, uint8_t min, uint8_t max)
+struct _Pixel pixel_zero()
 {
-    pixel->r = MIN(max, MAX(min, pixel->r));
-    pixel->g = MIN(max, MAX(min, pixel->g));
-    pixel->b = MIN(max, MAX(min, pixel->b));
-
-    return 0;
+    struct _Pixel zero;
+    pixel_init(&zero, 0, 0, 0);
+    return zero;
 }
