@@ -34,9 +34,9 @@ uint32_t image_filter_pixel_at(struct _Image *image, int32_t i, int32_t j,
     float r = 0, g = 0, b = 0;
     int32_t x, y;
 
-    for (x = i - 1; x <= i + 1; ++x)
+    for (x = i - 1; x <= i + 1; x++)
     {
-        for (y = j - 1; y <= j + 1; ++y)
+        for (y = j - 1; y <= j + 1; y++)
         {
             struct _Pixel pixel = get_pixel(image, x, y);
             r += pixel.r * filter[x - (i - 1)][y - (j - 1)];
@@ -112,9 +112,9 @@ int32_t set_image_pixels(struct _Image *image)
 
 static struct _Pixel get_pixel(struct _Image *image, int32_t x, int32_t y)
 {
-    if (x < 0 || x >= image->width || y < 0 || y >= image->height)
+    if (x < 0 || x >= image->height || y < 0 || y >= image->width)
         return pixel_zero();
-    return image->pixels[x + y * image->width];
+    return image->pixels[x * image->width + y];
 }
 
 char *read_line_from_buffer(struct _Buffer *buffer)
