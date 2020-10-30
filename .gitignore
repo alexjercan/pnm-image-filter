@@ -1,6 +1,3 @@
-tests/out
 tmp
-main
-utils
 *.so
 *.a
