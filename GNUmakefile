@@ -4,8 +4,8 @@ endif
 
 AR := ar
 CC := gcc
-CFLAGS := -fPIC -c -Wall -g -std=c89
-LDFLAGS := -shared -g -std=c89
+CFLAGS := -fPIC -c -Wall -g
+LDFLAGS := -shared -g
 LSFLAGS := rcs
 
 OBJ_DIR := $(IMAGE_FILTER_DIR)/tmp
