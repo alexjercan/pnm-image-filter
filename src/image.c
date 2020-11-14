@@ -106,7 +106,7 @@ int32_t set_image_max_color(struct _Image *image)
 
 int32_t set_image_pixels(struct _Image *image)
 {
-    image->pixels = (struct _Pixel *)image->raw.str + image->raw.idx;
+    image->pixels = (void *)image->raw.str + image->raw.idx;
     return 0;
 }
 
